@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2019 the original author or authors.
+ * Copyright 2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,10 +41,13 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 /**
+ * Unit tests for {@link RedisStateMachine} using RESP2.
+ *
  * @author Will Glozer
  * @author Mark Paluch
  */
-class StateMachineUnitTests {
+class RedisStateMachineResp2UnitTests {
+
     private RedisCodec<String, String> codec = new Utf8StringCodec();
     private Charset charset = Charset.forName("UTF-8");
     private CommandOutput<String, String, String> output;
@@ -61,6 +64,7 @@ class StateMachineUnitTests {
 
     @AfterAll
     static void afterClass() {
+
         LoggerContext ctx = (LoggerContext) LogManager.getContext();
         Configuration config = ctx.getConfiguration();
         LoggerConfig loggerConfig = config.getLoggerConfig(RedisStateMachine.class.getName());

@@ -25,6 +25,7 @@ import java.util.*;
 import io.lettuce.core.Range.Boundary;
 import io.lettuce.core.XReadArgs.StreamOffset;
 import io.lettuce.core.codec.RedisCodec;
+import io.lettuce.core.codec.StringCodec;
 import io.lettuce.core.codec.Utf8StringCodec;
 import io.lettuce.core.internal.LettuceAssert;
 import io.lettuce.core.output.*;
@@ -848,6 +849,21 @@ class RedisCommandBuilder<K, V> extends BaseRedisCommandBuilder<K, V> {
 
         CommandArgs<K, V> args = new CommandArgs<>(codec).addKey(key).addKeys(fields);
         return createCommand(HDEL, new IntegerOutput<>(codec), args);
+    }
+
+    Command<String, String, Map<String, Object>> hello(int protocolVersion, byte[] user, byte password[], byte[] name) {
+
+        CommandArgs<String, String> args = new CommandArgs<>(StringCodec.ASCII).add(protocolVersion);
+
+        if (user != null && password != null) {
+            args.add(AUTH).add(user).add(password);
+        }
+
+        if (name != null) {
+            args.add(SETNAME).add(name);
+        }
+
+        return new Command<>(HELLO, new GenericMapOutput<>(StringCodec.ASCII), args);
     }
 
     Command<K, V, Boolean> hexists(K key, K field) {

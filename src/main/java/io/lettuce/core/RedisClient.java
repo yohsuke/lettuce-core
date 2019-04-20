@@ -304,27 +304,10 @@ public class RedisClient extends AbstractRedisClient {
         connectionBuilder(getSocketAddressSupplier(redisURI), connectionBuilder, redisURI);
         channelType(connectionBuilder, redisURI);
 
-        if (clientOptions.isPingBeforeActivateConnection()) {
-            if (hasPassword(redisURI)) {
-                connectionBuilder.enableAuthPingBeforeConnect();
-            } else {
-                connectionBuilder.enablePingBeforeConnect();
-            }
-        }
-
         ConnectionFuture<RedisChannelHandler<K, V>> future = initializeChannelAsync(connectionBuilder);
         ConnectionFuture<?> sync = future;
 
-        if (!clientOptions.isPingBeforeActivateConnection() && hasPassword(redisURI)) {
-
-            sync = sync.thenCompose(channelHandler -> {
-
-                CommandArgs<K, V> args = new CommandArgs<>(codec).add(redisURI.getPassword());
-                return connection.async().dispatch(CommandType.AUTH, new StatusOutput<>(codec), args);
-            });
-        }
-
-        if (LettuceStrings.isNotEmpty(redisURI.getClientName())) {
+        if (clientOptions.getProtocolVersion() == ProtocolVersion.RESP2 && LettuceStrings.isNotEmpty(redisURI.getClientName())) {
             sync = sync.thenApply(channelHandler -> {
                 connection.setClientName(redisURI.getClientName());
                 return channelHandler;
@@ -341,10 +324,6 @@ public class RedisClient extends AbstractRedisClient {
         }
 
         return sync.thenApply(channelHandler -> (S) connection);
-    }
-
-    private static boolean hasPassword(RedisURI redisURI) {
-        return redisURI.getPassword() != null && redisURI.getPassword().length != 0;
     }
 
     /**
@@ -595,23 +574,10 @@ public class RedisClient extends AbstractRedisClient {
                 .connection(connection);
         connectionBuilder(getSocketAddressSupplier(redisURI), connectionBuilder, redisURI);
 
-        if (clientOptions.isPingBeforeActivateConnection()) {
-            connectionBuilder.enablePingBeforeConnect();
-        }
-
         channelType(connectionBuilder, redisURI);
         ConnectionFuture<?> sync = initializeChannelAsync(connectionBuilder);
 
-        if (!clientOptions.isPingBeforeActivateConnection() && hasPassword(redisURI)) {
-
-            sync = sync.thenCompose(channelHandler -> {
-
-                CommandArgs<K, V> args = new CommandArgs<>(codec).add(redisURI.getPassword());
-                return connection.async().dispatch(CommandType.AUTH, new StatusOutput<>(codec), args).toCompletableFuture();
-            });
-        }
-
-        if (LettuceStrings.isNotEmpty(clientName)) {
+        if (clientOptions.getProtocolVersion() == ProtocolVersion.RESP2 && LettuceStrings.isNotEmpty(clientName)) {
             sync = sync.thenApply(channelHandler -> {
                 connection.setClientName(clientName);
                 return channelHandler;

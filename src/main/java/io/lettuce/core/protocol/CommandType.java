@@ -23,9 +23,10 @@ package io.lettuce.core.protocol;
  * @author Zhang Jessey
  */
 public enum CommandType implements ProtocolKeyword {
+
     // Connection
 
-    AUTH, ECHO, PING, QUIT, READONLY, READWRITE, SELECT, SWAPDB,
+    AUTH, ECHO, HELLO, PING, QUIT, READONLY, READWRITE, SELECT, SWAPDB,
 
     // Server
 
