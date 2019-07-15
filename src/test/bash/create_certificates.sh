@@ -22,7 +22,7 @@ if [ ! -x "$(which openssl)" ] ; then
    exit 1
 fi
 
-KEYTOOL=keytool
+KEYTOOL=/usr/bin/keytool
 
 if [  ! -x "${KEYTOOL}" ] ; then
    KEYTOOL=${JAVA_HOME}/bin/keytool

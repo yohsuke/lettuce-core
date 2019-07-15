@@ -19,6 +19,7 @@ import static io.lettuce.core.cluster.topology.TopologyComparators.isChanged;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.util.Lists.newArrayList;
+import static org.junit.platform.commons.util.ReflectionUtils.tryToReadFieldValue;
 
 import java.util.*;
 
@@ -29,6 +30,7 @@ import io.lettuce.core.cluster.models.partitions.ClusterPartitionParser;
 import io.lettuce.core.cluster.models.partitions.Partitions;
 import io.lettuce.core.cluster.models.partitions.RedisClusterNode;
 import io.lettuce.core.internal.LettuceLists;
+import org.junit.platform.commons.util.ReflectionUtils;
 
 /**
  * Unit tests for {@link TopologyComparators}.
@@ -322,6 +324,18 @@ class TopologyComparatorsUnitTests {
         RedisClusterNode nodeB = createNode(4, 36, 1, 100);
         assertThat(nodeA.getSlots().containsAll(nodeB.getSlots())).isFalse();
         assertThat(nodeA.hasSameSlotsAs(nodeB)).isFalse();
+    }
+
+    @Test
+    void nullSlotsShouldBeSame() throws Exception{
+
+        RedisClusterNode nodeA = new RedisClusterNode();
+        RedisClusterNode nodeB = new RedisClusterNode();
+
+        assertThat(tryToReadFieldValue(RedisClusterNode.class, "slots", nodeA).get()).isNull();
+        assertThat(tryToReadFieldValue(RedisClusterNode.class, "slots", nodeB).get()).isNull();
+
+//        assertThat(nodeA.hasSameSlotsAs(nodeB)).isTrue(); // TODO
     }
 
     private RedisClusterNode createNode(Integer... slots) {

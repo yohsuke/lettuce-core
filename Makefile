@@ -401,9 +401,9 @@ endif
 endif
 
 work/redis-git/src/redis-cli work/redis-git/src/redis-server:
-	[ -d "work/redis-git" ] && cd work/redis-git && git reset --hard || \
-	git clone https://github.com/antirez/redis.git work/redis-git
-	cd work/redis-git && git checkout -q $(REDIS) && git pull origin $(REDIS)
+	#[ -d "work/redis-git" ] && cd work/redis-git && git reset --hard || \
+	#git clone https://github.com/antirez/redis.git work/redis-git
+	#cd work/redis-git && git checkout -q $(REDIS) && git pull origin $(REDIS)
 	$(MAKE) -C work/redis-git clean
 	$(MAKE) -C work/redis-git -j4
 

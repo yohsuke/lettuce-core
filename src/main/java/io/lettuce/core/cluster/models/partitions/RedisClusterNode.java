@@ -298,6 +298,11 @@ public class RedisClusterNode implements Serializable, RedisNodeDescription {
 
     public boolean hasSameSlotsAs(RedisClusterNode other) {
 
+//        return Objects.equals(this.slots, other.slots);
+//        if (this.slots == null && other.slots == null) {
+//            return true;
+//        }
+
         if (this.slots == null || other.slots == null) {
             return false;
         }
